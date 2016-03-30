@@ -100,7 +100,7 @@ float clampf(float value, float min, float max)
 - (UIImage *)imageForValue:(float)value
 {
     float percent = (_value - _minimumValue) / (_maximumValue - _minimumValue);
-    int imageNo = round(percent * self.frameCount - 1);
+    int imageNo = round(percent * (self.frameCount - 1));
     NSString *imageName = [NSString stringWithFormat:@"%@-%02d.png", self.imageBaseName, imageNo];
     
     UIImage *image = [UIImage imageNamed:imageName inBundle:[NSBundle bundleWithIdentifier:@"com.example.apple-samplecode.FilterDemoFramework"] compatibleWithTraitCollection:nil];
