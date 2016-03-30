@@ -103,8 +103,7 @@ float clampf(float value, float min, float max)
     int imageNo = round(percent * (self.frameCount - 1));
     NSString *imageName = [NSString stringWithFormat:@"%@-%02d.png", self.imageBaseName, imageNo];
     
-    UIImage *image = [UIImage imageNamed:imageName inBundle:[NSBundle bundleWithIdentifier:@"com.example.apple-samplecode.FilterDemoFramework"] compatibleWithTraitCollection:nil];
-    
+    UIImage *image = [UIImage imageNamed:imageName];
     return image;
 }
 
