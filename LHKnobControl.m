@@ -19,6 +19,10 @@ float clampf(float value, float min, float max)
 }
 
 @interface LHKnobControl ()
+{
+    CGPoint _previousTouchPoint;
+}
+
 
 @property (nonatomic) UIImageView *imageView;
 
@@ -31,11 +35,12 @@ float clampf(float value, float min, float max)
     self = [super initWithCoder:aDecoder];
     if (self)
     {
-        self.imageBaseName = @"knob";
         _value = 0.0;
         _minimumValue = 0.0;
         _maximumValue = 10.0;
-        _frameCount = 30;
+        _frameCount = 31;
+        _imageWidth = 64.0;
+        _imageHeight = 64.0;
     }
     
     return self;
@@ -72,38 +77,21 @@ float clampf(float value, float min, float max)
     
 }
 
-- (void)setImageBaseName:(NSString *)imageBaseName
-{
-    _imageBaseName = imageBaseName;
-    [self refresh];
-}
-
-- (void)setMinimumValue:(float)minimumValue
-{
-    _minimumValue = minimumValue;
-    [self refresh];
-}
-
-- (void)setMaximumValue:(float)maximumValue
-{
-    _maximumValue = maximumValue;
-    [self refresh];
-}
-
-- (void)setFrameCount:(NSUInteger)frameCount
-{
-    _frameCount = frameCount;
-    [self refresh];
-}
-
 - (UIImage *)imageForValue:(float)value
 {
+    if (!self.image)
+    {
+        return nil;
+    }
+    
     float percent = (_value - _minimumValue) / (_maximumValue - _minimumValue);
     int imageNo = round(percent * (self.frameCount - 1));
-    NSString *imageName = [NSString stringWithFormat:@"%@-%02d.png", self.imageBaseName, imageNo];
     
-    UIImage *image = [UIImage imageNamed:imageName];
-    return image;
+    CGRect cropRegion = CGRectMake(0.0, self.imageHeight * imageNo, self.imageWidth, self.imageHeight);
+    CGImageRef subImage = CGImageCreateWithImageInRect(self.image.CGImage, cropRegion);
+    UIImage *croppedImage = [UIImage imageWithCGImage:subImage];
+    
+    return croppedImage;
 }
 
 - (void)layoutSubviews
