@@ -1,8 +1,7 @@
 //
 //  LHKnobControl.h
-//  AudioUnitV3Example
 //
-//  Created by Luke on 3/30/16.
+//  Created by Luke Habermehl on 3/30/16.
 //
 //
 
