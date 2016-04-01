@@ -7,10 +7,6 @@
 
 #import <UIKit/UIKit.h>
 
-
-#import <UIKit/UIKit.h>
-
-
 /**
  LHKnobControl is a custom UIControl that provides knob functionality using an image set representing how the knob should look at each value.
  */
@@ -31,6 +27,7 @@
 /** The number of frame images that exist for the control */
 @property (nonatomic) NSUInteger frameCount;
 
+/** Reload the frame */
 - (void)refresh;
 
 @end
