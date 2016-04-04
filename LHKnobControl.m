@@ -23,8 +23,8 @@ float clampf(float value, float min, float max)
     CGPoint _previousTouchPoint;
 }
 
-
 @property (nonatomic) UIImageView *imageView;
+@property (nonatomic) BOOL isAnimating;
 
 @end
 
@@ -41,6 +41,7 @@ float clampf(float value, float min, float max)
         _frameCount = 31;
         _imageWidth = 64.0;
         _imageHeight = 64.0;
+        _isAnimating = NO;
     }
     
     return self;
@@ -87,7 +88,12 @@ float clampf(float value, float min, float max)
     float percent = (_value - _minimumValue) / (_maximumValue - _minimumValue);
     int imageNo = round(percent * (self.frameCount - 1));
     
-    CGRect cropRegion = CGRectMake(0.0, self.imageHeight * imageNo, self.imageWidth, self.imageHeight);
+    return [self imageForImageNumber:imageNo];
+}
+
+- (UIImage *)imageForImageNumber:(NSUInteger)number
+{
+    CGRect cropRegion = CGRectMake(0.0, self.imageHeight * number, self.imageWidth, self.imageHeight);
     CGImageRef subImage = CGImageCreateWithImageInRect(self.image.CGImage, cropRegion);
     UIImage *croppedImage = [UIImage imageWithCGImage:subImage];
     
@@ -112,6 +118,58 @@ float clampf(float value, float min, float max)
 - (void)refresh
 {
     self.value = clampf(_value, _minimumValue, _maximumValue);
+}
+
+- (void)setValue:(float)value animated:(BOOL)animated
+{
+    if (self.isAnimating)
+        return;
+    
+    if (!animated || value == _value)
+    {
+        [self setValue:value];
+        return;
+    }
+    
+    _isAnimating = YES;
+    
+    value = clampf(value, self.minimumValue, self.maximumValue);
+    
+    NSMutableArray *images = [NSMutableArray new];
+    float percentCurrent = (_value - _minimumValue) / (_maximumValue - _minimumValue);
+    float percentTarget = (value - _minimumValue) / (_maximumValue - _minimumValue);
+    NSUInteger imgNoCurrent = round(percentCurrent * (self.frameCount - 1));
+    NSUInteger imgNoTarget = round(percentTarget * (self.frameCount - 1));
+    
+    if (value > _value)
+    {
+        for (NSUInteger imgNo = imgNoCurrent; imgNo < imgNoTarget; imgNo++)
+        {
+            [images addObject:[self imageForImageNumber:imgNo]];
+        }
+    }
+    
+    else
+    {
+        for (NSUInteger imgNo = imgNoCurrent; imgNo > imgNoTarget; imgNo--)
+        {
+            [images addObject:[self imageForImageNumber:imgNo]];
+        }
+    }
+    
+    _value = value;
+    UIImageView *animationView = [[UIImageView alloc] initWithFrame:self.imageView.bounds];
+    animationView.animationImages = images;
+    animationView.animationDuration = 0.02 * images.count;
+    animationView.animationRepeatCount = 1;
+    [self addSubview:animationView];
+    [animationView startAnimating];
+    [self.imageView setImage:[self imageForValue:value]];
+    
+    __weak  LHKnobControl *weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(animationView.animationDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        weakSelf.isAnimating = NO;
+    });
 }
 
 @end

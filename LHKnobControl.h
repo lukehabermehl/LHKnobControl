@@ -7,6 +7,7 @@
 
 #import <UIKit/UIKit.h>
 
+
 /**
  LHKnobControl is a custom UIControl that provides knob functionality using an image set representing how the knob should look at each value.
  */
@@ -27,7 +28,10 @@
 /** The number of frame images that exist for the control */
 @property (nonatomic) NSUInteger frameCount;
 
-/** Reload the frame */
+/** Reload the frame image for the knob */
 - (void)refresh;
+
+/** Set the current value with the option to animate the knob moving to that value */
+- (void)setValue:(float)value animated:(BOOL)animated;
 
 @end
