@@ -58,8 +58,5 @@ To finish my example:
   {
     NSLog(@"changed the knob value to: %f", sender.value);
   }
+  ```
   
-
-        
-        
-        
