@@ -51,7 +51,7 @@ float clampf(float value, float min, float max)
 {
     _previousTouchPoint = [touch locationInView:self];
     
-    return TRUE;
+    return YES;
 }
 
 - (BOOL)continueTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
